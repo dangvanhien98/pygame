@@ -1,12 +1,10 @@
 
 #Import modules
-
 import pygame, random, sys
 from pygame.locals import *
 pygame.init()
 
 #màn hình
-
 window_height=600 
 window_width=1200
 
@@ -14,11 +12,12 @@ blue = (0,0,255)
 black = (0,0,0)
 white = (255, 255, 255)
 
+#tốc độ game
 fps = 25  
 level = 0
 addnewflamerate = 20 #tốc độ bắn đạn
 
-#defining the required function
+
 
 class dragon:
 
@@ -28,11 +27,11 @@ class dragon:
     velocity = 10 # tốc độ di chuyển rồng
     
     def __init__(self):
-        self.image = load_image('dragon.png')
+        self.image = load_image('image/dragon.png')
         self.imagerect = self.image.get_rect()
         self.imagerect.right = window_width
         self.imagerect.top = window_height/2
-   
+
     def update(self):
         # không cho rồng đi lên khỏi màn hình
         if (self.imagerect.top < cactusrect.bottom):
@@ -43,7 +42,7 @@ class dragon:
         if (self.imagerect.bottom > firerect.top):
             self.up = True
             self.down = False
-            
+        
         #di chuyển xuống    
         if (self.down):
             self.imagerect.bottom += self.velocity
@@ -52,21 +51,22 @@ class dragon:
         if (self.up):
             self.imagerect.top -= self.velocity
 
-          #  Canvas.blit(self.image, self.imagerect)
+ 
+    #trả về chiều cao        
     def return_height(self):
-
         h = self.imagerect.top
-        return h        
+        return h
+
 
 class flames:
     #tốc độ đạn
     flamespeed = 20
 
     def __init__(self):
-        self.image = load_image('ant.png')
+        self.image = load_image('image/ant.png')
         self.imagerect = self.image.get_rect()
-        #đạn theo rồng
-        self.height = Dragon.return_height() + 20
+        #rồng đạn theo rồng
+        self.height = Dragon.return_height() + 30
         self.surface = pygame.transform.scale(self.image, (30,30))
         #điểm bắt đầu của đạn
         self.imagerect = pygame.Rect(window_width - 105, self.height, 30, 30)
@@ -75,11 +75,11 @@ class flames:
     def update(self):
             self.imagerect.left -= self.flamespeed
 
-    def collision(self):
-        if self.imagerect.left == 0:
-            return False
-        else:
-            return True           
+    #def collision(self):
+    #   if self.imagerect.left == 0:
+    #       return False
+    #  else:
+    #       return True
 
 class bird:
     global moveup, movedown, gravity, cactusrect, firerect
@@ -87,13 +87,13 @@ class bird:
     downspeed = 10
 
     def __init__(self):
-        self.image = load_image('bird3.png')
+        self.image = load_image('image/bird3.png')
         self.imagerect = self.image.get_rect()
         self.imagerect.topleft = (30,window_height/2)
         self.score = 0
 
-    
-    def update(self):        
+    def update(self):
+        
         if (moveup and (self.imagerect.top > cactusrect.bottom)): #and (self.imagerect.top > cactusrect.bottom)
             self.imagerect.top -= self.speed
             self.score += 1
@@ -105,9 +105,10 @@ class bird:
         #trọng lực tự rơi xuống    
        # if (gravity and (self.imagerect.bottom < firerect.top)):
         #    self.imagerect.bottom += self.speed
-       
 
-def terminate():        #kết thúc chương trình
+
+#kết thúc chương trình
+def terminate():        
     pygame.quit()
     sys.exit()
 
@@ -120,7 +121,9 @@ def waitforkey():
                 if event.key == pygame.K_ESCAPE:
                     terminate()
                 return
-
+            
+            
+#va chạm
 def flamehitsbrid(playerrect, flames):      #kiểm tra va chạm
     for f in flame_list:
         if playerrect.colliderect(f.imagerect):
@@ -155,40 +158,49 @@ def check_level(score):
 
 #load hình
 def load_image(imagename):
-    return pygame.image.load(imagename)           
+    return pygame.image.load(imagename)
+
+    
+
+#start program
+
 
 mainClock = pygame.time.Clock()
 Canvas = pygame.display.set_mode((window_width,window_height))
 pygame.display.set_caption('DANG VAN HIEN')
 
 #phông chữ và âm thanh
+
 font = pygame.font.SysFont(None, 48)
 scorefont = pygame.font.SysFont(None, 30)
 
 #hình ảnh tường lửa dưới
-fireimage = load_image('fire_bricks.png')
+fireimage = load_image('image/fire_bricks.png')
 firerect = fireimage.get_rect()
 
 #hình ảnh tường xương rồng trên
-cactusimage = load_image('cactus_bricks.png')
+cactusimage = load_image('image/cactus_bricks.png')
 cactusrect = cactusimage.get_rect()
 
 #load hình ảnh bắt đầu
-startimage = load_image('start1.png')
+startimage = load_image('image/start1.png')
 startimagerect = startimage.get_rect()
 startimagerect.centerx = window_width/2
 startimagerect.centery = window_height/2
 
 #load hình ảnh kết thúc
-endimage = load_image('endgame.png')
+endimage = load_image('image/endgame.png')
 endimagerect = startimage.get_rect()
 endimagerect.centerx = window_width/2
-endimagerect.centery = window_height/2 
+endimagerect.centery = window_height/2
 
 #load nhạc
-pygame.mixer.music.load('nhacnen.wav')
-gameover = pygame.mixer.Sound('mario_dies.wav')
+pygame.mixer.music.load('music/nhacnen.wav')
+gameover = pygame.mixer.Sound('music/mario_dies.wav')
 
+# chuyển đến màn hình bắt đầu
+
+#drawtext('HIEN', font, Canvas,(window_width/3), (window_height/3))
 #hiển thị màn hình chờ
 Canvas.blit(startimage, startimagerect)
 pygame.display.update()
@@ -200,17 +212,16 @@ topscore = 0
 Dragon = dragon()
 
 while True:
-
     flame_list = []
     player = bird()
-    moveup = movedown = gravity = False
+    moveup = movedown = False
     flameaddcounter = 0
-
     gameover.stop()
-    pygame.mixer.music.play(-1,0.0)    
+    pygame.mixer.music.play(-1,0.0)
 
-    while True:     #the main game loop
-        
+    
+    #vòng lặp trò chơi
+    while True:             
         for event in pygame.event.get():
             if event.type == QUIT:
                 terminate()
@@ -220,22 +231,22 @@ while True:
                 if event.key == K_UP:
                     movedown = False
                     moveup = True
-                    gravity = False
+                  #  gravity = False
 
                 if event.key == K_DOWN:
                     movedown = True
                     moveup = False
-                    gravity = False
+                   # gravity = False
 
             if event.type == KEYDOWN:
 
                 if event.key == K_UP:
                     moveup = True
                     movedown = False
-                    gravity = True
+                 #   gravity = True
                 if event.key == K_DOWN:
                     movedown = True
-                    gravity = False
+                 #   gravity = False
                     moveup = False
 
             if event.type == KEYUP:
@@ -245,13 +256,16 @@ while True:
                     movedown = False
                   #  gravity = False
                     
+                    
                 if event.key == K_ESCAPE:
                     terminate()
 
         flameaddcounter += 1
         check_level(player.score)
-              
+        
+       
         if flameaddcounter == addnewflamerate:
+
             flameaddcounter = 0
             newflame = flames()
             flame_list.append(newflame)
@@ -268,37 +282,42 @@ while True:
 
         player.update()
         Dragon.update()
+
       
         screen = pygame.display.set_mode((1200,600))
-        bg = pygame.image.load("bg2.png")     
+        bg = pygame.image.load("image/bg2.png")
+       
     
         Canvas.blit(bg,(0,0))        
+
+    
         Canvas.blit(fireimage, firerect)
         Canvas.blit(cactusimage, cactusrect)
         Canvas.blit(player.image, player.imagerect)
         Canvas.blit(Dragon.image, Dragon.imagerect)
         
 
-     
+        drawtext('Score : %s | Top score : %s | Level : %s' %(player.score, topscore, level), scorefont, Canvas, 350, cactusrect.bottom + 10)
         
         for f in flame_list:
             Canvas.blit(f.surface, f.imagerect)
 
-        
-         #kiểm tra va chạm 
+               
+        #kiểm tra va chạm 
         if flamehitsbrid(player.imagerect, flame_list):
             if player.score > topscore:
                 topscore = player.score
             break
         
-        #
+        #kiểm tra va chạm vào tưởng lửa và xương rồng 
         if ((player.imagerect.top <= cactusrect.bottom) or (player.imagerect.bottom >= firerect.top)):
             if player.score > topscore:
                 topscore = player.score
-            break       
-
+            break
 
         pygame.display.update()
+
+        #tần suất game
         mainClock.tick(fps)
     
     pygame.mixer.music.stop()
@@ -306,11 +325,6 @@ while True:
     Canvas.blit(endimage, endimagerect)
     pygame.display.update()
     waitforkey()
-    
-        
-
-
-
         
     
 
